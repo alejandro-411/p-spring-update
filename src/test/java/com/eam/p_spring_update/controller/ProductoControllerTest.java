@@ -29,8 +29,6 @@ public class ProductoControllerTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-   
-
     @Test
     void actualizarProducto_DeberiaActualizarYRetornarOk() throws Exception {
         Producto producto = new Producto(1L, "P001", "Camisa actualizada", 60000.0, 8);
@@ -42,7 +40,8 @@ public class ProductoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(producto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nombre").value("Camisa actualizada"));
+                .andExpect(jsonPath("$.producto.nombre").value("Camisa actualizada"));
+
     }
 
     @Test

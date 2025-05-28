@@ -50,21 +50,14 @@ public class ProductoControllerIT {
     private ProductoRepository productoRepository;
 
     @BeforeEach
-    void cleanDB() {
+    void prepararDB() {
         productoRepository.deleteAll();
-    }
-
-    @BeforeEach
-    void setUp() {
         producto = new Producto(null, "P001", "Camisa", 50000.0, 10);
+        producto = productoRepository.save(producto);
     }
    
     @Test
     void actualizarProducto_DeberiaRetornar200() throws Exception {
-        mockMvc.perform(post("/api/productos/crear")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(producto)))
-                .andExpect(status().isOk());
 
         producto.setNombre("Camisa actualizada");
         producto.setPrecio(55000.0);
@@ -74,7 +67,7 @@ public class ProductoControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(producto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nombre").value("Camisa actualizada"));
+                .andExpect(jsonPath("$.producto.nombre").value("Camisa actualizada"));
     }
 
     @Test
