@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: update-replicaset
+  namespace: p-spring-update
+  labels:
+    app: update-product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: update-product
+  template:
+    metadata:
+      labels:
+        app: update-product
+    spec:
+      nodeSelector:
+        workload: update
+      imagePullSecrets:
+        - name: dockerhub-secret
+      containers:
+        - name: update
+          image: alejandro411/p_spring_update:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: maria-update-secret

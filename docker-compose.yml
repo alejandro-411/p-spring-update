@@ -1,0 +1,42 @@
+services:
+  mariadb:
+    image: mariadb:10.6
+    container_name: mariadb
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: microspringdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uappuser -papppass || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microspring-net
+
+  microservicio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: microservicio-spring
+    restart: always
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - microspring-net
+
+volumes:
+  mariadb_data:
+
+networks:
+  microspring-net:
+    driver: bridge
